@@ -2,21 +2,41 @@ import platform
 import socket
 import colorama
 import wmi
+import argparse
 
 import psutil
 import ctypes
 import random
-colorama.init()
+colorama.init(autoreset=True)
 from colorama import Fore, Style
 import os
 
+parser = argparse.ArgumentParser(description="Winfetch CLI tool")
+parser.add_argument("--nocolor", "--nocolour", action="store_true", dest="nocolor", help="Disable all colours")
+args = parser.parse_args()
+
+def color(text, color_code):
+    if args.nocolor:
+        return text
+    return color_code + text + Style.RESET_ALL
 
 
-print(
-    Fore.BLUE + " ▄▄▄▄ " + Style.RESET_ALL + Fore.CYAN + " ▄▄▄▄ " + Style.RESET_ALL + "\n" +
-    Fore.BLUE + "▄▀  ▀▄" + Style.RESET_ALL + Fore.CYAN + "▄▀  ▀▄" + Style.RESET_ALL + "\n" +
-    Fore.YELLOW + "▄▀▄▄▄▀" + Style.RESET_ALL + Fore.GREEN + "▄▀▄▄▄▀" + Style.RESET_ALL
+ascii_art = (
+    color(" ▄▄▄▄ ", Fore.BLUE) + color(" ▄▄▄▄\n", Fore.CYAN) +
+    color("▄▀  ▀▄", Fore.BLUE) + color("▄▀  ▀▄\n", Fore.CYAN) +
+    color("▄▀▄▄▄▀", Fore.YELLOW) + color("▄▀▄▄▄▀", Fore.GREEN)
 )
+print(ascii_art)
+print()
+message = ["HE HAS RAM GET HIM",
+           "Nice specs dewd!",
+           "Winfetch; Windows for Neofetch.. No wait it is the other way around!",
+           "aujdhdlrjrklr",
+           "Holy moly look at those specs!",
+           "mmm... memory chips..."]
+
+msg =random.choice(message)
+print(color(msg, Fore.YELLOW))
 
 print()
 def names():
@@ -24,8 +44,8 @@ def names():
     os_release = platform.release()
     os_version = platform.version()
     hostname = socket.gethostname()
-    print(Fore.BLUE + f"OS: {os_name} {os_release} {os_version}" + Style.RESET_ALL)
-    print(Fore.BLUE + f"Hostname: {hostname}" + Style.RESET_ALL)
+    print(color(f"OS: {os_name} {os_release} {os_version}", Fore.BLUE))
+    print(color(f"Hostname: {hostname}", Fore.BLUE))
     print()
 
 def ram_cpu_gpu():
@@ -35,36 +55,28 @@ def ram_cpu_gpu():
     gpu = wmi.WMI()
     c = gpu.Win32_VideoController()
 
-    for g in c:
-        gpu_name = g.Name
+    gpu_name = c[0].Name if c else "Unknown"
     cpu_usage = round(psutil.cpu_percent(), 1)
-    print(Fore.LIGHTYELLOW_EX + f"RAM: {ram_gb} GB" + Style.RESET_ALL)
-    print(Fore.LIGHTYELLOW_EX + f"CPU: {cpu}" + Style.RESET_ALL)
-    print(Fore.LIGHTYELLOW_EX + f"CPU Usage: {cpu_usage}%" + Style.RESET_ALL)
+    print(color(f"RAM: {ram_gb} GB", Fore.LIGHTYELLOW_EX))
+    print(color(f"CPU: {cpu}", Fore.LIGHTYELLOW_EX))
+    print(color(f"CPU Usage: {cpu_usage}%", Fore.LIGHTYELLOW_EX))
     print()
-    print(Fore.LIGHTYELLOW_EX + f"GPU: {gpu_name}" + Style.RESET_ALL)
+    print(color(f"GPU: {gpu_name}", Fore.LIGHTYELLOW_EX))
     print()
 
 def resolution():
     user32 = ctypes.windll.user32
     width = user32.GetSystemMetrics(0)
     height = user32.GetSystemMetrics(1)
-    print(Fore.YELLOW + f"Resolution: {width}x{height}" + Style.RESET_ALL)
+    print(color(f"Resolution: {width}x{height}", Fore.YELLOW))
     print()
 
 def shell():
     shell_path = os.environ.get("COMSPEC", "cmd.exe")
     shell_name = os.path.basename(shell_path)
-    print(Fore.LIGHTMAGENTA_EX + f"Shell: {shell_name}" + Style.RESET_ALL)
-message = ["HE HAS RAM GET HIM",
-           "Nice specs dewd!",
-           "Winfetch; Windows for Neofetch.. No wait it is the other way around!",
-           "aujdhdlrjrklr",
-           "Holy moly look at those specs!"
-           "mmm... memory chips..."]
-msg =random.choice(message)
-print(Fore.YELLOW + f"{msg}" + Style.RESET_ALL)
-print()
+    print(color(f"Shell: {shell_name}", Fore.LIGHTMAGENTA_EX))
+
+
 
 
 
