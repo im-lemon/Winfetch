@@ -20,7 +20,7 @@ def color(text, color_code):
         return text
     return color_code + text + Style.RESET_ALL
 
-
+print()
 ascii_art = (
     color(" ▄▄▄▄ ", Fore.BLUE) + color(" ▄▄▄▄\n", Fore.CYAN) +
     color("▄▀  ▀▄", Fore.BLUE) + color("▄▀  ▀▄\n", Fore.CYAN) +
