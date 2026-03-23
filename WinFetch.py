@@ -55,6 +55,7 @@ def ram_cpu_gpu():
     ram_gb = round(ram_bytes / (1024*1024*1024), 1)
     gpu = wmi.WMI()
     c = gpu.Win32_VideoController()
+    disk_part = psutil.disk_partitions()
 
     gpu_name = c[0].Name if c else "Unknown"
     cpu_usage = round(psutil.cpu_percent(), 1)
@@ -63,6 +64,7 @@ def ram_cpu_gpu():
     print(color(f"CPU Usage: {cpu_usage}%", Fore.LIGHTYELLOW_EX))
     print()
     print(color(f"GPU: {gpu_name}", Fore.LIGHTYELLOW_EX))
+    print(color(f"DISK PARTITIONS: {disk_part}", Fore.LIGHTYELLOW_EX))
     print()
 
 def resolution():
