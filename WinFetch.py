@@ -30,10 +30,11 @@ print(ascii_art)
 print()
 message = ["HE HAS RAM GET HIM",
            "Nice specs dewd!",
-           "Winfetch; Windows for Neofetch.. No wait it is the other way around!",
+           "Winfetch; Windows for Neofetch.. No wait it's the other way around!",
            "aujdhdlrjrklr",
            "Holy moly look at those specs!",
-           "mmm... memory chips..."]
+           "mmm... memory chips...",
+           "I use Windows btw"]
 
 msg =random.choice(message)
 print(color(msg, Fore.YELLOW))
