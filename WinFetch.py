@@ -3,6 +3,8 @@ import socket
 import colorama
 import wmi
 import argparse
+import time
+import getpass
 
 import psutil
 import ctypes
@@ -45,8 +47,10 @@ def names():
     os_release = platform.release()
     os_version = platform.version()
     hostname = socket.gethostname()
+    username = getpass.getuser()
     print(color(f"OS: {os_name} {os_release} {os_version}", Fore.BLUE))
     print(color(f"Hostname: {hostname}", Fore.BLUE))
+    print(color(f"USERNAME: {username}:", Fore.BLUE))
     print()
 
 def ram_cpu_gpu():
@@ -55,7 +59,29 @@ def ram_cpu_gpu():
     ram_gb = round(ram_bytes / (1024*1024*1024), 1)
     gpu = wmi.WMI()
     c = gpu.Win32_VideoController()
-    disk_part = psutil.disk_partitions()
+    all_partitions = psutil.disk_partitions()
+    for partition in all_partitions:
+        if "C:" in partition.device or "c:" in partition.device:
+            mountpoint = partition.device
+        else:
+            print(color(f"Disk: Unknown", Fore.LIGHTYELLOW_EX))
+            break
+        disk_usage = psutil.disk_usage(partition.mountpoint)
+        total_gb = disk_usage.total / (1024**3)
+        total_gb = round(total_gb, 1)
+        used_gb = disk_usage.used / (1024**3)
+        used_gb = round(used_gb, 1)
+        percent = disk_usage.percent
+
+        boot_time = psutil.boot_time()
+        current_time = time.time()
+
+        uptime_seconds = int(current_time - boot_time)
+        uptime_days = uptime_seconds // 86400
+        uptime_hours = (uptime_seconds % 86400) // 3600
+        uptime_minutes = (uptime_seconds % 3600) // 60
+        uptime_seconds = uptime_seconds % 60
+
 
     gpu_name = c[0].Name if c else "Unknown"
     cpu_usage = round(psutil.cpu_percent(), 1)
@@ -64,8 +90,9 @@ def ram_cpu_gpu():
     print(color(f"CPU Usage: {cpu_usage}%", Fore.LIGHTYELLOW_EX))
     print()
     print(color(f"GPU: {gpu_name}", Fore.LIGHTYELLOW_EX))
-    print(color(f"DISK PARTITIONS: {disk_part}", Fore.LIGHTYELLOW_EX))
+    print(color(f"Disk: {mountpoint} (total: {total_gb}) (used: {used_gb}) (percent: {percent})", Fore.LIGHTYELLOW_EX))
     print()
+    print(color(f"Uptime: {uptime_days}d, {uptime_hours}h, {uptime_minutes}m, {uptime_seconds}s", Fore.LIGHTRED_EX))
 
 def resolution():
     user32 = ctypes.windll.user32
