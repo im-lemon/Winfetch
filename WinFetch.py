@@ -94,10 +94,22 @@ def ram_cpu_gpu():
     print()
     print(color(f"Uptime: {uptime_days}d, {uptime_hours}h, {uptime_minutes}m, {uptime_seconds}s", Fore.LIGHTRED_EX))
 
+def battery():
+
+    battery = psutil.sensors_battery()
+    percent = battery.percent
+    if battery.power_plugged:
+        print(color(f"Battery: {percent}% (Charging)", Fore.BLUE))
+        print()
+    else:
+        print(color(f"Battery: {percent}% (Not charging)", Fore.BLUE))
+        print()
+
 def resolution():
     user32 = ctypes.windll.user32
     width = user32.GetSystemMetrics(0)
     height = user32.GetSystemMetrics(1)
+    print()
     print(color(f"Resolution: {width}x{height}", Fore.YELLOW))
     print()
 
@@ -111,6 +123,7 @@ def shell():
 
 
 names()
+battery()
 ram_cpu_gpu()
 resolution()
 shell()
